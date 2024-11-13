@@ -10,7 +10,7 @@ const app = new Elysia()
   .use(example)
   .listen({
     port: Bun.env.PORT || 8000,
-    tls: tlsConfig
+    // tls: tlsConfig
   })
 
 let protocol = 'http'
