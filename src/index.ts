@@ -3,9 +3,13 @@ import { example } from "./controllers/example.controllers"
 import { swaggerConfig } from "./config/swagger.config"
 import { tlsConfig } from "./config/tls.config"
 import cors from "@elysiajs/cors"
+import { MongoDB } from "./config/database.config"
+import { jwtConfig } from "./config/jwt.config"
 
+MongoDB.connect()
 const app = new Elysia()
   .use(cors())
+  .use(jwtConfig)
   .use(swaggerConfig)
   .use(example)
   .listen({
