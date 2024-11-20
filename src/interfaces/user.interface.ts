@@ -1,14 +1,14 @@
-import mongoose, { Mongoose } from "mongoose"
-import { register, user } from "../../tyoes/account.type"
-import { promises } from "dns"
+import mongoose from "mongoose"
+import { register, user } from "../../types/account.type"
 
-type userWithOutID = Omit<user, 'id'>
+type userWithoutID = Omit<user, "id">
 
-export interface IUserDocument extends mongoose.Document, userWithOutID {
+export interface IUserDocument extends mongoose.Document, userWithoutID {
     password_hash: string
-    Verifypassword: (password: string) => Promise<boolean>
+
+    verifyPassword: (password: string) => Promise<boolean>
     toUser: () => user
 }
-export interface IUserModel extends mongoose.Model<IUserDocument> {
+export interface IUsermodel extends mongoose.Model<IUserDocument> {
     createUser: (registerData: register) => Promise<IUserDocument>
 }

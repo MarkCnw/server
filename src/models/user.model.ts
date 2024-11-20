@@ -1,8 +1,9 @@
 import mongoose from "mongoose"
-import { IUserDocument, IUserModel } from "../interfaces/user.interface"
-import { user } from "../../tyoes/account.type"
+import { IUserDocument, IUsermodel } from "../interfaces/user.interface"
+import { register, user } from "../../types/account.type"
 
-const schema = new mongoose.Schema<IUserDocument, IUserModel>({
+
+const schema = new mongoose.Schema<IUserDocument, IUsermodel>({
     username: { type: String, required: true, unique: true },
     password_hash: { type: String, required: true },
     display_name: { type: String },
@@ -70,3 +71,18 @@ schema.methods.toUser = function (): user {
 function calculateAge(date_of_birth: any) {
     throw new Error("Function not implemented.")
 }
+schema.methods.verifyPassword = async function (password: string): Promise<boolean> {
+    return await Bun.password.verify(password, this.password_hash)
+}
+schema.statics.createUser = async function (registerData: register): Promise<IUserDocument> {
+    const newUser = await new this({
+        isplay_name: registerData.display_name,
+        password_hash: await Bun.password.hash(registerData.password),
+        date_of_birth: registerData.date_of_birth,
+        looking_for: registerData.looking_for
+    })
+    await newUser.save()
+    return newUser
+}
+export const User = mongoose.model<IUserDocument, IUsermodel>("User", schema)
+//

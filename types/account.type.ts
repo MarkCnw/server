@@ -1,6 +1,6 @@
 import { profile } from "console"
 import Elysia, { Static, t } from "elysia"
-
+import { register } from "module"
 export const _login = t.Object({
     username: t.String(),
     password: t.String()
@@ -21,13 +21,13 @@ export const _profile = t.Object({
     location: t.Optional(t.String()),
     age: t.Optional(t.String()),
     last_active: t.Optional(t.Date()),
-    create_at: t.Optional(t.Date()),
-    update_at: t.Optional(t.Date()),
+    created_at: t.Optional(t.Date()),
+    updated_at: t.Optional(t.Date()),
 
     //todo: implement upload feature
     //photo:photo.id[]
 })
-export const _user = t.String({
+export const _user = t.Object({
     ..._profile.properties
     //todo: implement like feature
     //followers:profile[]
