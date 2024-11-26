@@ -1,9 +1,12 @@
 import mongoose from "mongoose"
-import { IUserDocument, IUsermodel } from "../interfaces/user.interface"
-import { register, user } from "../../types/account.type"
+import { IUserDocument, IUserModel } from "../interfaces/user.interface"
+
+import { calculateAge } from "../helpers/date.helper"
+import { user } from "../../types/user.type"
+import { register } from "../../types/account.type"
 
 
-const schema = new mongoose.Schema<IUserDocument, IUsermodel>({
+const schema = new mongoose.Schema<IUserDocument, IUserModel>({
     username: { type: String, required: true, unique: true },
     password_hash: { type: String, required: true },
     display_name: { type: String },
@@ -13,6 +16,7 @@ const schema = new mongoose.Schema<IUserDocument, IUsermodel>({
     interest: { type: String },
     looking_for: { type: String },
     location: { type: String },
+    gender: { type: String },
 
     // todo: implement photo feature
     // photos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo' }],
@@ -60,6 +64,7 @@ schema.methods.toUser = function (): user {
         interest: this.interest,
         looking_for: this.looking_for,
         location: this.location,
+        gender: this.gender,
         // todo: photo feature
         // photos: userPhotos,
         // todo: like feature
@@ -68,9 +73,6 @@ schema.methods.toUser = function (): user {
     }
 }
 
-function calculateAge(date_of_birth: any) {
-    throw new Error("Function not implemented.")
-}
 schema.methods.verifyPassword = async function (password: string): Promise<boolean> {
     return await Bun.password.verify(password, this.password_hash)
 }
@@ -79,10 +81,11 @@ schema.statics.createUser = async function (registerData: register): Promise<IUs
         isplay_name: registerData.display_name,
         password_hash: await Bun.password.hash(registerData.password),
         date_of_birth: registerData.date_of_birth,
-        looking_for: registerData.looking_for
+        looking_for: registerData.looking_for,
+        gender: registerData.gender,
     })
     await newUser.save()
     return newUser
 }
-export const User = mongoose.model<IUserDocument, IUsermodel>("User", schema)
+export const User = mongoose.model<IUserDocument, IUserModel>("User", schema)
 //

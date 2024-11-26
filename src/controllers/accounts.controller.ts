@@ -1,7 +1,8 @@
 import Elysia from "elysia"
 import { jwtConfig } from "../config/jwt.config"
-import { AccountDto } from "../../types/account.type"
+import { _register, AccountDto } from "../../types/account.type"
 import { AccountService } from "../services/account.service"
+
 
 export const AccountController = new Elysia({
     prefix: '/api/account',
@@ -9,22 +10,38 @@ export const AccountController = new Elysia({
 })
     .use(jwtConfig)
     .use(AccountDto)
+    .post('/login', async ({ body, jwt, set }) => {
+        try {
+            const user = await AccountService.login(body)
+            const token = await jwt.sign({ id: user.id })
+            return { token, user }
+        } catch (error) {
+            set.status = 500
+            if (error instanceof Error)
+                throw new Error(error.message)
+            set.status = 500
+            throw new Error('something went wrong,try again later')
+        }
+    }, {
+        detail: { summary: "Login" },
+        body: "login",
+        response: "USER_and_token",
+    })
     .post('/register', async ({ body, jwt, set }) => {
         try {
             const user = await AccountService.createNewUser(body)
             const token = await jwt.sign({ id: user.id })
             return { token, user }
         } catch (error) {
-            set.status = 400
+            set.status = 500
             if (error instanceof Error)
                 throw new Error(error.message)
             set.status = 500
-            throw new Error('something went wrong try again')
-
+            throw new Error('something went wrong,try again later')
         }
     }, {
         body: "register",
-        response: "account",
+        response: "USER_and_token",
         detail: {
             summary: "create a new user"
 
@@ -37,4 +54,5 @@ export const AccountController = new Elysia({
                 throw new Error(`Invalid username or password`)
             }
         },
+
     })

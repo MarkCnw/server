@@ -1,4 +1,5 @@
-import { login, register, user } from "../../types/account.type"
+import { login, register } from "../../types/account.type"
+import { user } from "../../types/user.type"
 import { User } from "../models/user.model"
 
 export const AccountService = {
@@ -7,11 +8,9 @@ export const AccountService = {
         const user = await User.findOne({ username: loginData.username }).exec()
         if (!user) {
             throw new Error("User does not exist")
-
         }
-
         // Verify the password
-        const verifyPassword = await user.Verifypassword(loginData.password)
+        const verifyPassword = await user.verifyPassword(loginData.password)
         if (!verifyPassword) {
             throw new Error("Password is incorrect")
         }
@@ -22,11 +21,10 @@ export const AccountService = {
 
     createNewUser: async function (registerData: register): Promise<user> {
         // Check if the username already exists
-        const existingUser = await User.findOne({ username: registerData.username }).exec()
-        if (existingUser) {
+        const user = await User.findOne({ username: registerData.username }).exec()
+        if (user) {
             throw new Error(`${registerData.username} already exists`)
         }
-
         // Create a new user
         const newUser = await User.createUser(registerData)
         return newUser.toUser()
