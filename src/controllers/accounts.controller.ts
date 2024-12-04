@@ -1,6 +1,6 @@
 import Elysia from "elysia"
 import { jwtConfig } from "../config/jwt.config"
-import { _register, AccountDto } from "../../types/account.type"
+import { _userAndToken, AccountDto } from "../../types/account.type"
 import { AccountService } from "../services/account.service"
 
 
@@ -25,7 +25,7 @@ export const AccountController = new Elysia({
     }, {
         detail: { summary: "Login" },
         body: "login",
-        response: "USER_and_token",
+        response: _userAndToken,
     })
     .post('/register', async ({ body, jwt, set }) => {
         try {
@@ -41,10 +41,9 @@ export const AccountController = new Elysia({
         }
     }, {
         body: "register",
-        response: "USER_and_token",
+        response: _userAndToken,
         detail: {
             summary: "create a new user"
-
         },
         beforeHandle: ({ body: { username, password }, set }) => {
             const usernameRegex = /^[A-Za-z][A-Za-z\d]{3,9}$/

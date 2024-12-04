@@ -1,6 +1,7 @@
 import Elysia, { Static, t } from "elysia"
-import { _register } from "./account.type"
+import { register } from "./account.type"
 import { _pagination, CreatePagination } from "./pegination.type"
+import { _register } from "./register.type"
 
 
 export const _profile = t.Object({

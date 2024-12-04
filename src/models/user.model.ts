@@ -1,6 +1,5 @@
 import mongoose from "mongoose"
 import { IUserDocument, IUserModel } from "../interfaces/user.interface"
-
 import { calculateAge } from "../helpers/date.helper"
 import { user } from "../../types/user.type"
 import { register } from "../../types/account.type"
@@ -79,6 +78,7 @@ schema.methods.verifyPassword = async function (password: string): Promise<boole
 schema.statics.createUser = async function (registerData: register): Promise<IUserDocument> {
     const newUser = await new this({
         isplay_name: registerData.display_name,
+        username: registerData.username,
         password_hash: await Bun.password.hash(registerData.password),
         date_of_birth: registerData.date_of_birth,
         looking_for: registerData.looking_for,
