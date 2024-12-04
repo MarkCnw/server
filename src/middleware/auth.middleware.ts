@@ -7,7 +7,8 @@ type AuthContext = {
     Auth: { payload: false | (Record<string, string | number> & JWTPayloadSpec) }
 }
 export type AuthPayload = { id: string }
-export const AuthPayload = new Elysia({ name: 'middleware' })
+export const AuthMiddleware = new Elysia({ name: 'middleware' })
+
     .use(jwtConfig)
     .derive({ as: 'scoped' }, async ({ headers, jwt }): Promise<AuthContext> => {
         let payload: false | (Record<string, string | number> & JWTPayloadSpec) = false

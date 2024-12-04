@@ -2,8 +2,6 @@ import Elysia, { Static, t } from "elysia"
 import { register } from "./account.type"
 import { _pagination, CreatePagination } from "./pegination.type"
 import { _register } from "./register.type"
-
-
 export const _profile = t.Object({
     ...t.Omit(_register, ['password']).properties,
     id: t.String(),
@@ -12,7 +10,7 @@ export const _profile = t.Object({
     location: t.Optional(t.String()),
     age: t.Optional(t.String()),
     last_active: t.Optional(t.Date()),
-    created_at: t.Optional(t.String()),
+    created_at: t.Optional(t.Date()),
     updated_at: t.Optional(t.Date()),
 
     //todo: implement upload feature
@@ -30,6 +28,7 @@ const _userPagination = t.Object({
     min_age: t.Optional(t.Number()),
     max_age: t.Optional(t.Number()),
     looking_for: t.Optional(t.Union([t.Literal('male'), t.Literal('all')])),
+    gender: t.Optional(t.Union([t.Literal('male'), t.Literal('all')])),
 
 })
 export const _updateProfile = t.Omit(_profile, ['id', 'username', 'update_at', 'age'])

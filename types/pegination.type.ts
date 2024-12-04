@@ -1,7 +1,7 @@
 import { Static, t, TSchema } from "elysia"
 
 export const _pagination = t.Object({
-    pagesize: t.Number(),
+    pageSize: t.Number(),
     currentPage: t.Number(),
     length: t.Optional(t.Number()),
 })
