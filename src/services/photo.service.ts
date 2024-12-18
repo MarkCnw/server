@@ -10,28 +10,26 @@ export const PhotoService = {
         const buffer = await file.arrayBuffer()
         const isFileValid = ImageHelper.isImage(buffer)
         if (!isFileValid)
-            throw new Error("image must be .jpeg or .png")
+            throw new Error("Image must be .jpg or .png")
         const base64 = Buffer.from(buffer).toString('base64')
-        const dataURI = `data:${file.type};base64,${base64}`
-        const cloudPhoto = await Cloudinary.uploader.upload(dataURI, {
-            folder: 'class-example-user-images',
-            resource_type: 'auto',
+        const dataURL = `data:${file.type};base64,${base64}`
+        const cloundPhoto = await Cloudinary.uploader.upload(dataURL, {
+            folder: 'class-example-user-image',
+            resource_type: "auto",
             transformation: [{
-                widh: 500,
+                width: 500,
                 height: 500,
                 crop: 'fill',
-                gravity: 'face',
+                gravity: 'face'
             }]
         })
-
-        if (cloudPhoto.public_id || !cloudPhoto.secure_url)
-            throw new Error("something went wrong")
+        if (!cloundPhoto.public_id || !cloundPhoto.secure_url)
+            throw new Error("Something went wrong")
         const uploadPhoto = new Photo({
             user: new mongoose.Types.ObjectId(user_id),
-            url: cloudPhoto.secure_url,
-            public_id: cloudPhoto.public_id
+            url: cloundPhoto.secure_url,
+            public_id: cloundPhoto.public_id
         })
-
         await uploadPhoto.save()
         await User.findByIdAndUpdate(
             user_id,
@@ -39,15 +37,37 @@ export const PhotoService = {
         )
         return uploadPhoto.toPhoto()
     },
-
-    get: async function (user_id: string): Promise<photo> {
-        throw new Error("not implemented")
+    getPhotos: async function (user_id: string): Promise<photo[]> {
+        const photoDocs = await Photo.find({ user: user_id }).exec()
+        const photos = photoDocs.map(doc => doc.toPhoto())
+        return photos
     },
     delete: async function (photo_id: string): Promise<boolean> {
-        throw new Error("not implemented")
+        const doc = await Photo.findById(photo_id).exec()
+        if (!doc)
+            throw new Error(`photo ${photo_id} not existing`)
+
+        await User.findByIdAndDelete(doc.user, {
+            $pull: { photos: photo_id }
+        })
+
+        await Photo.findByIdAndDelete(photo_id)
+
+        await Cloudinary.uploader.destroy(doc.public_id)
+
+        return true
     },
     setAvatar: async function (photo_id: string, user_id: string): Promise<boolean> {
-        throw new Error("not implemented")
-    },
+        await Photo.updateMany(
+            { user: new mongoose.Types.ObjectId(user_id) },
+            { $set: { is_avatar: false } }
+        )
+        const result = await Photo.findByIdAndUpdate(photo_id,
+            { $set: { is_avatar: true } },
+            { new: true }
+        )
+        return !!result
+
+    }
 
 }

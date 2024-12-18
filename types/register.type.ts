@@ -1,5 +1,5 @@
 import { t } from "elysia"
-
+import { _login } from "./account.type"
 
 export const _register = t.Object({
     username: t.String(),

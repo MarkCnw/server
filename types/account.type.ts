@@ -2,6 +2,7 @@ import Elysia, { Static, t } from "elysia"
 import { register } from "module"
 import { _user } from "./user.type"
 import { _register } from "./register.type"
+
 export const _login = t.Object({
     username: t.String(),
     password: t.String()

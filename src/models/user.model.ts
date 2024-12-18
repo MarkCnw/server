@@ -4,6 +4,7 @@ import { calculateAge } from "../helpers/date.helper"
 import { user } from "../../types/user.type"
 import { register } from "../../types/account.type"
 import { Photo } from "./photo.model"
+import { _register } from "../../types/register.type"
 
 
 const schema = new mongoose.Schema<IUserDocument, IUserModel>({
@@ -17,13 +18,12 @@ const schema = new mongoose.Schema<IUserDocument, IUserModel>({
     looking_for: { type: String },
     location: { type: String },
     gender: { type: String },
-
     photos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo' }],
 
     // todo: implement photo feature
     // todo: implement like feature
-    // followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    // following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 })
@@ -38,19 +38,19 @@ schema.methods.toUser = function (): user {
         ? this.photos.map(photo => (new Photo(photo)).toPhoto())
         : undefined
 
-    // const parseLikeUser = (user: IUserDocument[]) => {
-    //     return user.map(u => {
-    //         if (u.display_name)
-    //             return u.toUser()
-    //         return u._id!.toString()
-    //     })
-    // }
-    // const following = Array.isArray(this.following)
-    //     ? parseLikeUser(this.following)
-    //     : undefined
-    // const followers = Array.isArray(this.followers)
-    //     ? parseLikeUser(this.followers)
-    //     : undefined
+    const parseLikeUser = (user: IUserDocument[]) => {
+        return user.map(u => {
+            if (u.display_name)
+                return u.toUser()
+            return u._id!.toString()
+        })
+    }
+    const following = Array.isArray(this.following)
+        ? parseLikeUser(this.following)
+        : undefined
+    const followers = Array.isArray(this.followers)
+        ? parseLikeUser(this.followers)
+        : undefined
 
     return {
         id: this._id.toString(),
@@ -69,8 +69,8 @@ schema.methods.toUser = function (): user {
         // todo: photo feature
         photos: userPhotos,
         // todo: like feature
-        // following: following,
-        // followers: followers,
+        following: following,
+        followers: followers,
     }
 }
 
