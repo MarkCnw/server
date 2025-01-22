@@ -26,6 +26,7 @@ export const AccountService = {
         return user.toUser()
     },
 
+
     createNewUser: async function (registerData: register): Promise<user> {
         const user = await User.findOne({ username: registerData.username }).exec()
         if (user) {
