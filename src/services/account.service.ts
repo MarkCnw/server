@@ -1,3 +1,4 @@
+import { promises } from "dns"
 import { login, register } from "../../types/account.type"
 import { user } from "../../types/user.type"
 import { User } from "../models/user.model"
@@ -35,4 +36,5 @@ export const AccountService = {
         const newUser = await User.createUser(registerData)
         return newUser.toUser()
     }
+
 }
