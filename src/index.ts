@@ -1,33 +1,41 @@
 import { Elysia, t } from "elysia"
-import { example } from "./controllers/example.controllers"
-import { swaggerConfig } from "./config/swagger.config"
-import { tlsConfig } from "./config/tls.config"
-import cors from "@elysiajs/cors"
-import { MongoDB } from "./config/database.config"
-import { jwtConfig } from "./config/jwt.config"
-import { AccountController } from "./controllers/accounts.controller"
+
+import { cors } from '@elysiajs/cors'
+
 import { UserController } from "./controllers/user.controller"
 import staticPlugin from "@elysiajs/static"
-import { photocontroller } from "./controllers/photo.controller"
-import { LikeController } from "./controllers/like.controller"
+import { PhotoController } from "./controllers/photo.controller"
+import { MongoDB } from "./config/database.config"
+import { jwtConfig } from "./config/jwt.config"
+import { swaggerConfig } from "./config/swagger.config"
+import { tlsConfig } from "./config/tls.config"
+import { AccountController } from "./controllers/accounts.controller"
 import { ErrorController } from "./controllers/error.Controller"
+import { LikeController } from "./controllers/like.controller"
 
 MongoDB.connect()
 const app = new Elysia()
+  .use(ErrorController)
   .use(cors())
+  .use(AccountController)
   .use(jwtConfig)
   .use(swaggerConfig)
-  .use(example)
-  .use(AccountController)
-  .use(UserController)
-  .use(photocontroller)
   .use(LikeController)
+  // .use(Example)
+  .use(UserController)
   .use(staticPlugin({
     assets: "public/uploads",
     prefix: "img"
   }))
-  .use(ErrorController)
+  .use(PhotoController)
+  //   .listen({
+  //     port: Bun.env.PORT || 8000,
+  //     tls: tlsConfig
+  //   })
 
+  // console.log(
+  //   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  // )
   .listen({
     port: Bun.env.PORT || 8000,
     tls: tlsConfig

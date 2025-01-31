@@ -1,29 +1,30 @@
 import Elysia from "elysia"
-import { UserDto } from "../../types/user.type"
-import { UserService } from "../services/user.service"
-import { AuthMiddleware, AuthPayload } from "../middleware/auth.middleware"
 
+import { UserService } from "../services/user.service"
+
+import { Accountservices } from "../services/account.service"
+import { UserDto } from "../../types/user.type"
+import { AuthMiddleware, AuthPayload } from "../middleware/auth.middleware"
 
 export const UserController = new Elysia({
     prefix: "/api/user",
-    tags: ['user']
+    tags: ['User']
 })
-
     .use(UserDto)
     .use(AuthMiddleware)
     .get('/all', () => {
         return {
             user: [
-                { id: '123', name: 'John Doe', }
+                { id: '12', name: 's' },
+                { id: '14', name: 't' }
             ]
         }
-    },)
-
+    })
     .get('/', ({ query, Auth }) => {
         const user_id = (Auth.payload as AuthPayload).id
         return UserService.get(query, user_id)
     }, {
-        detail: { summary: "get user" },
+        detail: { summary: "Get User" },
         query: "pagination",
         response: "users",
         isSignIn: true,
@@ -32,8 +33,8 @@ export const UserController = new Elysia({
     .patch('/', async ({ body, set, Auth }) => {
         try {
             const user_id = (Auth.payload as AuthPayload).id
-            return await UserService.updateProfile(body, user_id)
-            set.status = 404
+            await UserService.updateProfile(body, user_id)
+            set.status = "No Content"
         } catch (error) {
             set.status = "Bad Request"
             if (error instanceof Error)

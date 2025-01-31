@@ -1,13 +1,13 @@
 import mongoose from "mongoose"
-import { IUserDocument, IUserModel } from "../interfaces/user.interface"
-import { calculateAge } from "../helpers/date.helper"
-import { user } from "../../types/user.type"
-import { register } from "../../types/account.type"
+
+
 import { Photo } from "./photo.model"
-import { _register } from "../../types/register.type"
+import { register } from "../../types/account.type"
+import { user } from "../../types/user.type"
+import { calculateAge } from "../helpers/date.helper"
+import { IUserDocument, Iusermodel } from "../interfaces/user.interface"
 
-
-const schema = new mongoose.Schema<IUserDocument, IUserModel>({
+const schema = new mongoose.Schema<IUserDocument, Iusermodel>({
     username: { type: String, required: true, unique: true },
     password_hash: { type: String, required: true },
     display_name: { type: String },
@@ -19,9 +19,6 @@ const schema = new mongoose.Schema<IUserDocument, IUserModel>({
     location: { type: String },
     gender: { type: String },
     photos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo' }],
-
-    // todo: implement photo feature
-    // todo: implement like feature
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, {
@@ -66,17 +63,15 @@ schema.methods.toUser = function (): user {
         looking_for: this.looking_for ?? 'all',
         location: this.location,
         gender: this.gender,
-        // todo: photo feature
         photos: userPhotos,
-        // todo: like feature
         following: following,
         followers: followers,
     }
 }
-
 schema.methods.verifyPassword = async function (password: string): Promise<boolean> {
     return await Bun.password.verify(password, this.password_hash)
 }
+
 schema.statics.createUser = async function (registerData: register): Promise<IUserDocument> {
     const newUser = await new this({
         display_name: registerData.display_name,
@@ -89,5 +84,4 @@ schema.statics.createUser = async function (registerData: register): Promise<IUs
     await newUser.save()
     return newUser
 }
-export const User = mongoose.model<IUserDocument, IUserModel>("User", schema)
-//
+export const User = mongoose.model<IUserDocument, Iusermodel>("User", schema)

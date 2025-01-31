@@ -1,8 +1,7 @@
 import mongoose from "mongoose"
-import { User } from "../models/user.model"
+import { userPagination, userPaginator, user } from "../../types/user.type"
 import { QueryHelper } from "../helpers/query.helper"
-import { user, userPagination, userPaginator } from "../../types/user.type"
-
+import { User } from "../models/user.model"
 
 
 export const LikeService = {
@@ -43,7 +42,6 @@ export const LikeService = {
         pagination.length = total[0].count
         let follower: user[] = []
         if (docs) {
-            // follower = docs.followers as user[]
             follower = docs.toUser()['followers'] as user[]
         }
         return {

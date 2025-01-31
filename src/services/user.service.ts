@@ -1,9 +1,11 @@
-import mongoose, { RootFilterQuery } from "mongoose"
-import { updateProfile, user, userPagination, userPaginator } from "../../types/user.type"
-import { IUserDocument } from "../interfaces/user.interface"
+import mongoose, { Promise, RootFilterQuery } from "mongoose"
+import { userPagination, userPaginator, updateProfile, user } from "../../types/user.type"
 import { QueryHelper } from "../helpers/query.helper"
+
 import { User } from "../models/user.model"
-import { _pagination } from "../../types/pegination.type"
+import { IUserDocument } from "../interfaces/user.interface"
+
+
 
 export const UserService = {
     get: async function (pagination: userPagination, user_id: string): Promise<userPaginator> {
@@ -16,24 +18,23 @@ export const UserService = {
         query.skip(skip).limit(pagination.pageSize)
             .populate("photos")
 
-        const [docs, total] = await Promise.all([
-            query.exec(),
-            User.countDocuments(filter).exec()
+        const [docs, total] = ([
+            await query.exec(),
+            await User.countDocuments(filter).exec()
         ])
+
         pagination.length = total
-        const users = docs.map(doc => doc.toUser())
         return {
             pagination: pagination,
-            items: users
+            items: docs.map(doc => doc.toUser())
         }
     },
     getByUserName: async function (username: string): Promise<user> {
-        const user = await User.findOne({ username }).exec()
+        const user = await User.findOne({ username }).populate("photos").exec()
         if (user)
             return user.toUser()
-        throw new Error(`username: "${username}" not found!`)
+        throw new Error(`username:"${username}" not found!!`)
     },
-
     updateProfile: async function (newProfile: updateProfile, user_id: string): Promise<user> {
         const user = await User.findByIdAndUpdate(user_id, { $set: newProfile }, { new: true, runValidators: true })
         if (user)

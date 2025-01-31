@@ -1,15 +1,15 @@
 import mongoose from "mongoose"
-import { IPhotoDocument, IPhotomodel } from "../interfaces/photo.interface"
-import { _photo, photo } from "../../types/photo.type"
+import { photo } from "../../types/photo.type"
+import { IPhotoDocument, IPhotoModel } from "../interfaces/photo.interface"
 
 
-const schema = new mongoose.Schema<IPhotoDocument, IPhotomodel>({
+const schema = new mongoose.Schema<IPhotoDocument, IPhotoModel>({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     public_id: { type: String, required: true },
     url: { type: String, required: true },
-    is_avatar: { type: Boolean, required: true, default: false },
+    is_avatar: { type: Boolean, required: true, default: false }
 }, {
-    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+    timestamps: { createdAt: 'created_at' }
 })
 
 schema.methods.toPhoto = function (): photo {
@@ -27,10 +27,12 @@ schema.statics.setAvatar = async function (photo_id: string, user_id: string): P
         { user: new mongoose.Types.ObjectId(user_id) },
         { $set: { is_avatar: false } }
     )
-    const updatedPhoto = await this.findByIdAndUpdate(
-        photo_id, { $set: { is_avatar: true } }
+    const updatePhoto = await this.findByIdAndUpdate(
+        photo_id,
+        { $set: { is_avatar: true } }
     )
-    return !!updatedPhoto
+    return !!updatePhoto
+    //updateธรรมดาเป็นnullมี!เปลี่ยนเป็นbooleanเเต่ค่าsetสำเร็จเป็นเท็จเลยต้อง!!จะได้ค่าsetสำเร็จเป็นจริง
 }
 
-export const Photo = mongoose.model<IPhotoDocument, IPhotomodel>('Photo', schema)
+export const Photo = mongoose.model<IPhotoDocument, IPhotoModel>("Photo", schema)

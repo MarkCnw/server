@@ -1,8 +1,8 @@
 import Elysia from "elysia"
-import { jwtConfig } from "../config/jwt.config"
-import { _userAndToken, AccountDto } from "../../types/account.type"
-import { AccountService } from "../services/account.service"
 
+import { Accountservices } from "../services/account.service"
+import { AccountDto, _userandToken } from "../../types/account.type"
+import { jwtConfig } from "../config/jwt.config"
 
 export const AccountController = new Elysia({
     prefix: '/api/account',
@@ -12,38 +12,41 @@ export const AccountController = new Elysia({
     .use(AccountDto)
     .post('/login', async ({ body, jwt, set }) => {
         try {
-            const user = await AccountService.login(body)
+            const user = await Accountservices.login(body)
             const token = await jwt.sign({ id: user.id })
-            return { token, user }
+            return { user, token }
         } catch (error) {
-            set.status = 500
+            set.status = "Bad Request"
             if (error instanceof Error)
                 throw new Error(error.message)
-            set.status = 500
-            throw new Error('something went wrong,try again later')
+            set.status = "Internal Server Error"
+            throw new Error("Something went wrong, tr again later")
+
         }
     }, {
         detail: { summary: "Login" },
         body: "login",
-        response: _userAndToken,
+        response: _userandToken,
     })
+
     .post('/register', async ({ body, jwt, set }) => {
         try {
-            const user = await AccountService.createNewUser(body)
+            const user = await Accountservices.createNewUser(body)
             const token = await jwt.sign({ id: user.id })
             return { token, user }
         } catch (error) {
-            set.status = 500
+            set.status = "Bad Request"
             if (error instanceof Error)
                 throw new Error(error.message)
             set.status = 500
-            throw new Error('something went wrong,try again later')
+            throw new Error('Somthing went wrong, Try again later')
         }
+
     }, {
         body: "register",
-        response: _userAndToken,
+        response: _userandToken,
         detail: {
-            summary: "create a new user"
+            summary: "Create new user"
         },
         beforeHandle: ({ body: { username, password }, set }) => {
             const usernameRegex = /^[A-Za-z][A-Za-z\d]{3,9}$/
@@ -53,5 +56,5 @@ export const AccountController = new Elysia({
                 throw new Error(`Invalid username or password`)
             }
         },
-
-    })
+    }
+    )

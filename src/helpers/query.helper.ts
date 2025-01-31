@@ -1,6 +1,13 @@
 import mongoose from "mongoose"
-import { IUserDocument } from "../interfaces/user.interface"
 import { userPagination } from "../../types/user.type"
+import { IUserDocument } from "../interfaces/user.interface"
+
+
+
+
+
+
+
 export const QueryHelper = {
 
     parseUserQuery: function (query: userPagination): mongoose.FilterQuery<IUserDocument>[] {
@@ -16,7 +23,7 @@ export const QueryHelper = {
             const _filter = { looking_for: { $regex: regEx } }
             filter.push(_filter)
         }
-        if (query.gender && query.gender != 'all') {
+        if (query.gender && query.gender !== 'all') {
             const regEx = new RegExp(`\\b${query.gender.trim()}`, 'i')
             const _filter = { gender: { $regex: regEx } }
             filter.push(_filter)
