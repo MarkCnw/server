@@ -1,4 +1,4 @@
-import Elysia from "elysia"
+import Elysia, { t } from "elysia"
 
 import { UserService } from "../services/user.service"
 
@@ -20,6 +20,19 @@ export const UserController = new Elysia({
             ]
         }
     })
+
+
+    .get('/:username', ({ params: { username } }) => {
+        return UserService.getByUserName(username)
+    }, {
+        detail: { summary: "Get by username" },
+        // query: t.Object({
+        //     username: t.String()
+        // }),
+        response: "user",
+        isSignIn: true,
+    })
+
     .get('/', ({ query, Auth }) => {
         const user_id = (Auth.payload as AuthPayload).id
         return UserService.get(query, user_id)
@@ -29,6 +42,7 @@ export const UserController = new Elysia({
         response: "users",
         isSignIn: true,
     })
+
 
     .patch('/', async ({ body, set, Auth }) => {
         try {
