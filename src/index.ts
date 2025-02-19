@@ -12,6 +12,7 @@ import { tlsConfig } from "./config/tls.config"
 import { AccountController } from "./controllers/accounts.controller"
 import { ErrorController } from "./controllers/error.Controller"
 import { LikeController } from "./controllers/like.controller"
+import { MessageController } from "./controllers/message.controller"
 
 MongoDB.connect()
 const app = new Elysia()
@@ -21,6 +22,7 @@ const app = new Elysia()
   .use(jwtConfig)
   .use(swaggerConfig)
   .use(LikeController)
+  .use(MessageController)
   // .use(Example)
   .use(UserController)
   .use(staticPlugin({
