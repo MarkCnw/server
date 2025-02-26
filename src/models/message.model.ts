@@ -2,6 +2,7 @@ import mongoose from "mongoose"
 import { IMessageDocument, IMessageModel } from "../interfaces/message.interface"
 import { message } from "../../types/massage.type"
 
+
 const schema = new mongoose.Schema<IMessageDocument, IMessageModel>({
     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -26,7 +27,7 @@ schema.methods.toMessage = function (): message {
     }
 }
 
-schema.index({ sender: 1, created_at: 1 })
+schema.index({ sender: 1, recipient: 1, created_at: 1 })
 schema.index({ recipient: 1, sender: 1, created_at: 1 })
 
-export const Message = mongoose.model<IMessageDocument, IMessageModel>('Message', schema)
+export const Message = mongoose.model<IMessageDocument, IMessageModel>("Message", schema)

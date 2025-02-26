@@ -1,11 +1,9 @@
-import { error } from "console"
-import Elysia, { t } from "elysia"
-import mongoose from "mongoose"
-import { message, MessageDto } from "../../types/massage.type"
+import Elysia, { error, t } from "elysia"
 import { jwtConfig } from "../config/jwt.config"
 import { AuthMiddleware, AuthPayload } from "../middleware/auth.middleware"
+import { MessageDto, message } from "../../types/massage.type"
+import mongoose from "mongoose"
 import { Message } from "../models/message.model"
-
 
 type client = {
     ws_id: string,

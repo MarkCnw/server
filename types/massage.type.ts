@@ -1,6 +1,7 @@
 import Elysia, { Static, t } from "elysia"
 import { _pagination, CreatePagination } from "./pegination.type"
 
+
 const _message = t.Object({
     id: t.Optional(t.String()),
     sender: t.String(),
@@ -18,6 +19,5 @@ export type message = Static<typeof _message>
 
 export const MessageDto = new Elysia().model({
     pagination: t.Optional(_pagination),
-
     message: _messagePaginator
 })
